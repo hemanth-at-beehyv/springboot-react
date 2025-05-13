@@ -30,7 +30,7 @@ services:
 
     frontend:
         container_name: frontend
-        image: hemanth12reddy/springboot-backend:${frontend_image_tag:-latest}
+        image: hemanth12reddy/springboot-frontend:${frontend_image_tag:-latest}
         restart: always
         ports:
             - '3000:80'
