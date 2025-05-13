@@ -55,13 +55,10 @@ jobs:
       - name: check docker version
         run: docker version
 
-      - name: checkout to working directory
+      - name: checkout to working directory and deploy
         run: | 
           cd ${{ secrets.ENV_SETUP_PATH }}
           cd springboot-react
           git pull origin main
-      
-      - name: deploy application
-        run: |
           source .env
           docker compose up -d
