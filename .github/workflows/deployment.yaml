@@ -30,6 +30,22 @@ jobs:
           docker build -t docker.io/${{ secrets.DOCKER_USERNAME }}/springboot-frontend:${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }} .
           docker push docker.io/${{ secrets.DOCKER_USERNAME }}/springboot-frontend:${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }}
         working-directory: frontend
+      
+      - name: update image tag
+        run: |
+          sed -i 's/^backend_image_tag=.*/backend_image_tag="${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }}"/' .env
+          echo "Updated backend_image_tag to: ${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }}"
+
+          sed -i 's/^frontend_image_tag=.*/frontend_image_tag="${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }}"/' .env
+          echo "Updated frontend_image_tag to: ${{ github.ref_name }}-${{ github.sha }}-${{ github.run_number }}"
+
+      - name: commit and push changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .env
+          git commit -m "Update image tags in .env"
+          git push origin main
 
   deploy:
     name: Deploy in docker compose
@@ -39,3 +55,13 @@ jobs:
       - name: check docker version
         run: docker version
 
+      - name: checkout to working directory
+        run: | 
+          cd ${{ secrets.ENV_SETUP_PATH }}
+          cd springboot-react
+          git pull origin main
+      
+      - name: deploy application
+        run: |
+          source .env
+          docker compose up -d
