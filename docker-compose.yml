@@ -6,10 +6,40 @@ services:
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=test
+            
         ports:
             - '5432:5432'
-#        volumes:
-#            - postgres:/var/lib/postgresql/data
-#
-#volumes:
-#    postgres: {}
+        volumes:
+          - postgres:/var/lib/postgresql/data
+
+    backend:
+        container_name: backend
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: always
+        ports:
+            - '9001:9001'
+        depends_on:
+            - postgres
+        # env_file:
+        #     - .env.backend
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/test?currentSchema=demo
+            - SPRING_DATASOURCE_USERNAME=postgres
+            - SPRING_DATASOURCE_PASSWORD=postgres
+
+    frontend:
+        container_name: frontend
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        restart: always
+        ports:
+            - '3000:80'
+        depends_on:
+            - backend
+
+volumes:
+   postgres: 
