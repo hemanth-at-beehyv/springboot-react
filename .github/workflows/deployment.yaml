@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build docker images
-    runs-on: ubuntu-latest
+    runs-on: [beehyv-test]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
