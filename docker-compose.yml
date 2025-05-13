@@ -15,9 +15,7 @@ services:
 
     backend:
         container_name: backend
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: hemanth12reddy/springboot-backend:${backend_image_tag:-latest}
         restart: always
         ports:
             - '9001:9001'
@@ -26,15 +24,13 @@ services:
         # env_file:
         #     - .env.backend
         environment:
-            - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/test?currentSchema=demo
-            - SPRING_DATASOURCE_USERNAME=postgres
-            - SPRING_DATASOURCE_PASSWORD=postgres
+            - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+            - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+            - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
 
     frontend:
         container_name: frontend
-        build:
-            context: ./frontend
-            dockerfile: Dockerfile
+        image: hemanth12reddy/springboot-backend:${frontend_image_tag:-latest}
         restart: always
         ports:
             - '3000:80'
